@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+from sklearn.metrics import mean_squared_error
 from pipeline import *
 from utils import *
 
@@ -44,6 +46,16 @@ def main():
     model.fit(x_train, y_train, eval_set=[(x_train, y_train), (x_test, y_test)], verbose=100)
 
     viz_feature_imp(model)
+
+    test['prediction'] = model.predict(x_test)
+    ax = test[['Passengers']].plot(figsize=(15, 5))
+    test['prediction'].plot(ax=ax, style='--')
+    plt.legend(['Truth Data', 'Predictions'])
+    ax.set_title('Raw Data and Prediction')
+    plt.show()
+
+    score = np.sqrt(mean_squared_error(test['Passengers'], test['prediction']))
+    print(f'RMSE Score on Test set: {score:0.2f}')
 
 if __name__ == "__main__":
     main()
